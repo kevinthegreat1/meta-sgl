@@ -30,21 +30,19 @@ env:
 
 jobs:
   build:
-    runs-on: >-
-      runs-on=${{ github.run_id }}/runner=${{ inputs.runner_size }}-${{ inputs.runner_arch }}
+    runs-on: ${{ inputs.runner_arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     env:
       KAS_WORK_DIR: "${{ github.workspace }}/kas-build"
       HARDWARE_ARCH: ${{ inputs.hardware_arch }}
 
     steps:
-      - uses: runs-on/action@v2
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
           path: kas-build/layers/meta-sgl
 
       - name: Set up cache for Yocto downloads
-        uses: runs-on/cache@v4
+        uses: actions/cache@v4
         with:
           path: ${{ env.KAS_WORK_DIR }}/build/downloads
           key: ${{ runner.os }}-yocto-downloads-${{ env.HARDWARE_ARCH }}-${{ inputs.build_profile }}-${{ hashFiles('kas-build/layers/meta-sgl/kas/**/*.yml') }}
@@ -53,7 +51,7 @@ jobs:
             ${{ runner.os }}-yocto-downloads-${{ env.HARDWARE_ARCH }}-
 
       - name: Set up cache for sstate
-        uses: runs-on/cache@v4
+        uses: actions/cache@v4
         with:
           path: ${{ env.KAS_WORK_DIR }}/build/sstate-cache
           key: ${{ runner.os }}-yocto-sstate-${{ env.HARDWARE_ARCH }}-${{ inputs.build_profile }}-${{ hashFiles('kas-build/layers/meta-sgl/kas/**/*.yml') }}
@@ -62,7 +60,7 @@ jobs:
             ${{ runner.os }}-yocto-sstate-${{ env.HARDWARE_ARCH }}-
 
       - name: Cache apt packages
-        uses: runs-on/cache@v4
+        uses: actions/cache@v4
         with:
           path: ${{ env.APT_CACHE_DIR }}
           key: ${{ runner.os }}-apt-${{ runner.arch }}-yocto-host-deps
