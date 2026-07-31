@@ -38,6 +38,7 @@ jobs:
         id: find-run
         run: |
           RUN_ID=$(gh run list -w "QEMU RISCV64 + SpaceROS" \
+            --repo "${{ github.repository }}" \
             --status success --limit 1 --json databaseId --jq '.[0].databaseId')
           echo "run-id=$RUN_ID" >> "$GITHUB_OUTPUT"
         env:
