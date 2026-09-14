@@ -1,2 +1,0 @@
-sgl-image filter=lfs diff=lfs merge=lfs -text
-sgl-image/** filter=lfs diff=lfs merge=lfs -text
